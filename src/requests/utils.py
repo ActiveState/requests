@@ -516,10 +516,14 @@ def _parse_content_type_header(header):
 
     for param in params:
         param = param.strip()
-        if param and (idx := param.find("=")) != -1:
-            key = param[:idx].strip(strip_chars)
-            value = param[idx + 1 :].strip(strip_chars)
-            params_dict[key.lower()] = value
+        if not param:
+            continue
+        idx = param.find("=")
+        if idx == -1:
+            continue
+        key = param[:idx].strip(strip_chars)
+        value = param[idx + 1 :].strip(strip_chars)
+        params_dict[key.lower()] = value
     return content_type, params_dict
 
 
