@@ -76,10 +76,10 @@ DEFAULT_POOL_TIMEOUT = None
 
 def _urllib3_request_context(
     request: "PreparedRequest",
-    verify: "bool | str | None",
-    client_cert: "tuple[str, str] | str | None",
+    verify: "typing.Optional[typing.Union[bool, str]]",
+    client_cert: "typing.Optional[typing.Union[tuple[str, str], str]]",
     poolmanager: "PoolManager",
-) -> "(dict[str, typing.Any], dict[str, typing.Any])":
+) -> "tuple[dict[str, typing.Any], dict[str, typing.Any]]":
     host_params = {}
     pool_kwargs = {}
     parsed_request_url = urlparse(request.url)
