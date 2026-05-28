@@ -5,7 +5,7 @@
 __title__ = 'requests'
 __description__ = 'Python HTTP for Humans.'
 __url__ = 'https://requests.readthedocs.io'
-__version__ = '2.27.1.2'
+__version__ = '2.27.1+security.2'
 __build__ = 0x022701
 __author__ = 'Kenneth Reitz'
 __author_email__ = 'me@kennethreitz.org'
