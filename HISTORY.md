@@ -27,11 +27,6 @@ dev
   utility function, not standard requests usage.
   (GHSA-gc5v-m9x4-r6x2)
 
-- [CVE-2023-32681] Proxy-Authorization header no longer forwarded to destination
-  servers when following HTTPS redirects (included from 2.27.1.1).
-  (GHSA-j8r2-6x86-q33q)
-
-
 2.27.1.1 (2023-10-12)
 -------------------
 
