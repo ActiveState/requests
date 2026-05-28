@@ -6,6 +6,27 @@ dev
 
 - \[Short description of non-trivial change.\]
 
+2.27.1+security.2 (2026-05-28)
+-------------------------------
+
+**Security**
+
+- [CVE-2024-35195] `Session` objects no longer reuse a connection pool created
+  with `verify=False` for subsequent requests expecting TLS verification to the
+  same host. Pool selection now keys on TLS settings.
+  (GHSA-9wx4-h78v-vm56)
+
+- [CVE-2024-47081] `get_netrc_auth()` now uses `ri.hostname` instead of
+  `ri.netloc` for netrc lookups, preventing credential leakage to hosts that
+  share a netloc prefix with the legitimate target.
+  (GHSA-9hjg-9r4m-mvj7)
+
+- [CVE-2026-25645] `extract_zipped_paths()` now extracts to a non-deterministic
+  path via `tempfile.mkstemp()` instead of a predictable `/tmp/<filename>` path,
+  preventing local pre-create attacks. Note: only affects direct callers of this
+  utility function, not standard requests usage.
+  (GHSA-gc5v-m9x4-r6x2)
+
 2.27.1.1 (2023-10-12)
 -------------------
 
