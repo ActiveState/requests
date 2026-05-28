@@ -317,6 +317,54 @@ class HTTPAdapter(BaseAdapter):
 
         return conn
 
+    def _get_connection(self, request, verify, proxies=None):
+        """Backport of CVE-2024-35195: select connection pool keyed on TLS
+        settings so a verify=False connection is never reused for a subsequent
+        request that expects TLS verification.
+
+        :param request: The :class:`PreparedRequest <PreparedRequest>` being sent.
+        :param verify: SSL verification setting (bool or CA bundle path).
+        :param proxies: (optional) Proxies dict.
+        :rtype: urllib3.ConnectionPool
+        """
+        proxy = select_proxy(request.url, proxies)
+        parsed = urlparse(request.url)
+        scheme = parsed.scheme.lower()
+        host_params = {
+            'scheme': scheme,
+            'host': parsed.hostname,
+            'port': parsed.port,
+        }
+        pool_kwargs = {}
+        if verify is False:
+            pool_kwargs['cert_reqs'] = 'CERT_NONE'
+        else:
+            pool_kwargs['cert_reqs'] = 'CERT_REQUIRED'
+        if isinstance(verify, str):
+            pool_kwargs['ca_certs'] = verify
+
+        try:
+            if proxy:
+                proxy = prepend_scheme_if_needed(proxy, 'http')
+                proxy_url = parse_url(proxy)
+                if not proxy_url.host:
+                    raise InvalidProxyURL(
+                        "Please check proxy URL. It is malformed "
+                        "and could be missing the host."
+                    )
+                proxy_manager = self.proxy_manager_for(proxy)
+                conn = proxy_manager.connection_from_host(
+                    pool_kwargs=pool_kwargs, **host_params
+                )
+            else:
+                conn = self.poolmanager.connection_from_host(
+                    pool_kwargs=pool_kwargs, **host_params
+                )
+        except ValueError as e:
+            raise InvalidURL(e, request=request)
+
+        return conn
+
     def close(self):
         """Disposes of any internal state.
 
@@ -410,7 +458,7 @@ class HTTPAdapter(BaseAdapter):
         """
 
         try:
-            conn = self.get_connection(request.url, proxies)
+            conn = self._get_connection(request, verify, proxies)
         except LocationValueError as e:
             raise InvalidURL(e, request=request)
 
