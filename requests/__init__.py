@@ -55,7 +55,11 @@ except ImportError:
     chardet_version = None
 
 def check_compatibility(urllib3_version, chardet_version, charset_normalizer_version):
-    urllib3_version = urllib3_version.split('.')
+    # Drop any PEP 440 local-version segment (e.g. the ActiveState '+security.N'
+    # tag) before parsing: '1.26.20+security.2' would otherwise split into
+    # ['1', '26', '20+security', '2'], breaking the major/minor/patch unpack and
+    # the int(patch) conversion.
+    urllib3_version = urllib3_version.split('+', 1)[0].split('.')
     assert urllib3_version != ['dev']  # Verify urllib3 isn't installed from git.
 
     # Sometimes, urllib3 only reports its version as 16.1.
