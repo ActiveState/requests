@@ -6,6 +6,17 @@ dev
 
 - \[Short description of non-trivial change.\]
 
+2.27.1+security.3 (2026-06-12)
+-------------------------------
+
+**Bugfix**
+
+- `check_compatibility()` no longer fails when urllib3 reports a PEP 440
+  local version such as the ActiveState `1.26.20+security.2` build. The
+  `+security.N` segment is now stripped before parsing, so the version no
+  longer splits into `['1', '26', '20+security', '2']` (which broke the
+  major/minor/patch unpack and the `int()` conversion). Python 2 compatible.
+
 2.27.1+security.2 (2026-05-28)
 -------------------------------
 
