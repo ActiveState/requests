@@ -62,6 +62,11 @@ def check_compatibility(urllib3_version, chardet_version, charset_normalizer_ver
     urllib3_version = urllib3_version.split('+', 1)[0].split('.')
     assert urllib3_version != ['dev']  # Verify urllib3 isn't installed from git.
 
+    # Only major.minor.patch matter. Drop a PEP 440 post-release segment such
+    # as the ActiveState '1.26.20.post4' builds, which would otherwise break
+    # the three-way unpack below.
+    urllib3_version = urllib3_version[:3]
+
     # Sometimes, urllib3 only reports its version as 16.1.
     if len(urllib3_version) == 2:
         urllib3_version.append('0')
