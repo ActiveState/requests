@@ -6,6 +6,27 @@ dev
 
 - \[Short description of non-trivial change.\]
 
+2.27.1.post4 (2026-11-05)
+-------------------------
+
+**Security hardening**
+
+- `no_proxy` entries now match whole domain labels only:
+  `no_proxy=example.com` still bypasses the proxy for `example.com` and
+  `sub.example.com`, but no longer for `badexample.com`. A leading dot on an
+  entry is ignored. Backport of requests #7427 (2.34.0), the port of CPython
+  bpo-39057. No CVE or GHSA. Python 2 compatible.
+
+**Bugfix**
+
+- `check_compatibility()` accepts urllib3 post-release versions such as the
+  ActiveState `1.26.20.post4` build. It used to raise ValueError on them,
+  which `import requests` turned into a `RequestsDependencyWarning`.
+
+This release uses the `X.Y.Z.postN` version scheme, replacing the
+`+security.N` local versions of earlier ActiveState releases (inventory
+2.27.1.4).
+
 2.27.1+security.3 (2026-06-12)
 -------------------------------
 
