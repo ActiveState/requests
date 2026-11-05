@@ -778,6 +778,13 @@ def should_bypass_proxies(url, no_proxy):
                 host_with_port += ':{}'.format(parsed.port)
 
             for host in no_proxy:
+                # Match whole domain labels only, so that "example.com" does
+                # not also bypass the proxy for "badexample.com". A leading
+                # dot on the entry is ignored. (CPython bpo-39057)
+                host = host.lstrip('.')
+                if parsed.hostname == host or host_with_port == host:
+                    return True
+                host = '.' + host
                 if parsed.hostname.endswith(host) or host_with_port.endswith(host):
                     # The URL does match something in no_proxy, so we don't want
                     # to apply the proxies on this URL.
